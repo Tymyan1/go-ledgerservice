@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"ledgerservice/pkg/domain"
-	"log"
 )
 
 type TransactionDb struct {
@@ -11,9 +10,8 @@ type TransactionDb struct {
 }
 
 func (db *TransactionDb) Save(transaction domain.Transaction) error {
-	log.Print(transaction)
-	log.Print(transaction.Type)
-	_, err := db.DB.Exec("INSERT INTO transactions (key, amount, type, account_key) VALUES ($1, $2, $3, $4)", transaction.Key, transaction.Amount, transaction.Type, transaction.AccountKey)
+	_, err := db.DB.Exec("INSERT INTO transactions (key, amount, type, account_key, balance, posted_timestamp) VALUES ($1, $2, $3, $4, $5, $6)",
+		transaction.Key, transaction.Amount, transaction.Type, transaction.AccountKey, transaction.Balance, transaction.PostedTimestamp)
 	return err
 }
 
@@ -29,7 +27,7 @@ func (db *TransactionDb) QueryAll() ([]domain.Transaction, error) {
 	for rows.Next() {
 		var tx domain.Transaction
 
-		err := rows.Scan(&tx.Key, &tx.Amount, &tx.Type, &tx.AccountKey)
+		err := rows.Scan(&tx.Key, &tx.Amount, &tx.Type, &tx.AccountKey, &tx.Balance, &tx.PostedTimestamp)
 		if err != nil {
 			return nil, err
 		}

@@ -1,0 +1,1 @@
+ALTER TABLE transactions ADD balance NUMERIC NOT NULL
